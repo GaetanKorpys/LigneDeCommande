@@ -1,6 +1,8 @@
 from ivy.ivy import *
 from ivy.std_api import *
 import re
+from GUI import GUI
+from queue import Queue
 
 class LigneDeCommande():
 
@@ -25,45 +27,33 @@ class LigneDeCommande():
     def send(self, message):
         IvySendMsg(message)
 
-    def checkRegex(self, message):
-        if re.match("^AVANCE [1-9][0-9]?$|^AVANCE 100$", message):
-            return True
-        elif re.match("^RECULE [1-9][0-9]?$|^RECULE 100$", message):
-            return True
-        elif re.match("^TOURNEDROITE (?:36[0]|3[0-5][0-9]|[12][0-9][0-9]|[1-9]?[0-9])?$", message):
-            return True
-        elif re.match("^TOURNEGAUCHE (?:36[0]|3[0-5][0-9]|[12][0-9][0-9]|[1-9]?[0-9])?$", message):
-            return True
-        elif re.match("^LEVECRAYON$", message):
-            return True
-        elif re.match("^BAISSECRAYON$", message):
-            return True
-        elif re.match("^ORIGINE$", message):
-            return True
-        elif re.match("^RESTAURE", message):
-            return True
-        elif re.match("^NETTOIE$", message):
-            return True
-        elif re.match("^FCC (?:1?[0-9]{1,2}|2[0-4][0-9]|25[0-5]) (?:1?[0-9]{1,2}|2[0-4][0-9]|25[0-5]) (?:1?[0-9]{1,2}|2[0-4][0-9]|25[0-5])$", message):
-            return True
-        elif re.match("^FCAP (?:36[0]|3[0-5][0-9]|[12][0-9][0-9]|[1-9]?[0-9])?$", message):
-            return True
-        elif re.match("^FPOS [1-9][0-9]?$|^FPOS 100$", message):
-            return True
-        else:
-            return False
 
-    def __init__(self, agent_name):
 
-        IvyInit(agent_name, "Ligne De Commande est pret", 0, self.on_connetion_change, self.on_die)
+    def __init__(self, master):
+
+        self.master = master
+        self.queue = Queue()
+        self.gui = GUI(self.master, self.queue, self.endApplication)
+
+        self.thread1 = threading.Thread(target=self.workerThread1)
+        self.thread1.start()
+
+    def workerThread1(self):
+        IvyInit("Ligne De Commande Agent", "Ligne De Commande est pret", 0, self.on_connetion_change, self.on_die)
         IvyStart("127.0.0.1:2010")
-        time.sleep(0.5)
+        self.periodicCall()
 
-        while(1):
-            self.input = input("Entrer une commande : ")
-            if self.checkRegex(self.input):
-                self.send(self.input)
-            else:
-                print("Erreur : commande incorrecte")
+    def endApplication(self):
+        IvyStop()
+        sys.exit(0)
 
+    def periodicCall(self):
+        """
+        Handle all the messages currently in the queue (if any).
+        """
+        if not self.queue.empty():
+            msg = self.queue.get()
+            self.send(msg)
+
+        self.master.after(100, self.periodicCall)
 
