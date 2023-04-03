@@ -1,33 +1,12 @@
 from ivy.ivy import *
 from ivy.std_api import *
-import re
 from GUI import GUI
 from queue import Queue
 
 class LigneDeCommande():
 
-    def on_message(agent):
-        info("Received from %r: %s", agent)
-
-    def on_connetion_change(agent, event, *args):
-        if event == IvyApplicationDisconnected:
-            #info("Ivy application %r has disconnected", agent)
-            print("Ivy application %r has disconnected", agent)
-        else:
-            #info("Ivy application %r has connected", agent)
-            #info("Ivy application currently on the bus: %s", ",".join(IvyGetApplicationList()))
-            print("Ivy application %r has connected", agent)
-            print("Ivy application currently on the bus: %s", ",".join(IvyGetApplicationList()))
-
-    def on_die(agent, id):
-        #info("Received the order to die from %r with id = %d", agent, id)
-        print("Received the order to die from %r with id = %d", agent, id)
-        IvyStop()
-
     def send(self, message):
         IvySendMsg(message)
-
-
 
     def __init__(self, master):
 
@@ -39,7 +18,7 @@ class LigneDeCommande():
         self.thread1.start()
 
     def workerThread1(self):
-        IvyInit("Ligne De Commande Agent", "Ligne De Commande est pret", 0, self.on_connetion_change, self.on_die)
+        IvyInit("Ligne De Commande Agent","Ligne De Commande est pret",0, self.on_connetion_change, self.on_die)
         IvyStart("127.0.0.1:2010")
         self.periodicCall()
 
@@ -57,3 +36,17 @@ class LigneDeCommande():
 
         self.master.after(100, self.periodicCall)
 
+    def on_connetion_change(agent, event, *args):
+        if event == IvyApplicationDisconnected:
+            # info("Ivy application %r has disconnected", agent)
+            print("Ivy application %r has disconnected", agent)
+        else:
+            # info("Ivy application %r has connected", agent)
+            # info("Ivy application currently on the bus: %s", ",".join(IvyGetApplicationList()))
+            print("Ivy application %r has connected", agent)
+            print("Ivy application currently on the bus: %s", ",".join(IvyGetApplicationList()))
+
+    def on_die(agent, id):
+        #info("Received the order to die from %r with id = %d", agent, id)
+        print("Received the order to die from %r with id = %d", agent, id)
+        IvyStop()
