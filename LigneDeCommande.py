@@ -18,8 +18,8 @@ class LigneDeCommande():
         self.thread1.start()
 
     def workerThread1(self):
-        IvyInit("Ligne De Commande Agent","Ligne De Commande est pret",0, self.on_connetion_change, self.on_die)
-        IvyStart("127.0.0.1:2010")
+        IvyInit("LigneDeCommandeAgent","Ligne De Commande est pret",0, self.on_connetion_change, self.on_die)
+        IvyStart()
         self.periodicCall()
 
     def endApplication(self):
