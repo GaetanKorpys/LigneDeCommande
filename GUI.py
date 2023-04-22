@@ -5,9 +5,15 @@ import math
 from ivy.ivy import *
 from ivy.std_api import *
 
+from RegexCommand import RegexCommand
+
 
 class GUI():
     def __init__(self, master, queue, endCommand):
+
+        # Import regex commands
+        self.regexCommand = RegexCommand()
+
 
         self.queue = queue
         self.master = master
@@ -39,29 +45,29 @@ class GUI():
         self.queue.put(message)
 
     def checkRegex(self, message):
-        if re.match("^AVANCE [1-9][0-9]?$|^AVANCE 100$", message):
+        if re.match(self.regexCommand.avancerRegex, message):
             return True
-        elif re.match("^RECULE [1-9][0-9]?$|^RECULE 100$", message):
+        elif re.match(self.regexCommand.reculerRegex, message):
             return True
-        elif re.match("^TOURNEDROITE (?:36[0]|3[0-5][0-9]|[12][0-9][0-9]|[1-9]?[0-9])?$", message):
+        elif re.match(self.regexCommand.tourneDroiteRegex, message):
             return True
-        elif re.match("^TOURNEGAUCHE (?:36[0]|3[0-5][0-9]|[12][0-9][0-9]|[1-9]?[0-9])?$", message):
+        elif re.match(self.regexCommand.tourneGaucheRegex, message):
             return True
-        elif re.match("^LEVECRAYON$", message):
+        elif re.match(self.regexCommand.leveCrayonRegex, message):
             return True
-        elif re.match("^BAISSECRAYON$", message):
+        elif re.match(self.regexCommand.baisseCrayonRegex, message):
             return True
-        elif re.match("^ORIGINE$", message):
+        elif re.match(self.regexCommand.origineRegex, message):
             return True
-        elif re.match("^RESTAURE", message):
+        elif re.match(self.regexCommand.restaureRegex, message):
             return True
-        elif re.match("^NETTOIE$", message):
+        elif re.match(self.regexCommand.nettoieRegex, message):
             return True
-        elif re.match("^FCC (?:1?[0-9]{1,2}|2[0-4][0-9]|25[0-5]) (?:1?[0-9]{1,2}|2[0-4][0-9]|25[0-5]) (?:1?[0-9]{1,2}|2[0-4][0-9]|25[0-5])$", message):
+        elif re.match(self.regexCommand.fccRegex, message):
             return True
-        elif re.match("^FCAP (?:36[0]|3[0-5][0-9]|[12][0-9][0-9]|[1-9]?[0-9])?$", message):
+        elif re.match(self.regexCommand.fcapRegex, message):
             return True
-        elif re.match("^FPOS*", message):
+        elif re.match(self.regexCommand.fposRegex, message):
             return True
         else:
             return False
