@@ -9,6 +9,7 @@ from RegexCommand import RegexCommand
 
 
 class GUI():
+    ''' Constructeur '''
     def __init__(self, master, queue, endCommand):
 
         # Import regex commands
@@ -32,6 +33,7 @@ class GUI():
 
 
     def readFromKeyboard(self, event):
+        '''Entrée utilisateur'''
         cmd = self.sv.get().strip()
         if self.checkRegex(cmd) :
             self.addToQueue(cmd)
@@ -42,9 +44,12 @@ class GUI():
 
 
     def addToQueue(self, message):
+        ''' Ajoute l'ordre dans la liste '''
         self.queue.put(message)
 
+
     def checkRegex(self, message):
+        ''' Vérifie si le regex est correct '''
         if re.match(self.regexCommand.avancerRegex, message):
             return True
         elif re.match(self.regexCommand.reculerRegex, message):

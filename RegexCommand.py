@@ -1,4 +1,5 @@
 class RegexCommand():
+    '''Constructeur'''
     def __init__(self):
         # REGEX COMMAND
         self.avancerRegex = "^AVANCE (?:[1-9]|[1-9][0-9]|[1-4][0-9]{2}|500)$"
